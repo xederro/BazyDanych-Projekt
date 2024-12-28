@@ -1,17 +1,12 @@
+import DeployButton from "@/components/deploy-button";
+import { EnvVarWarning } from "@/components/env-var-warning";
+import HeaderAuth from "@/components/header-auth";
+import { ThemeSwitcher } from "@/components/theme-switcher";
+import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import { Geist } from "next/font/google";
+import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
-import {Menu, Monitor, ShoppingCart, User} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {createClient} from "@/utils/supabase/server";
-import {signOutAction} from "@/app/actions";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -19,102 +14,63 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Z-Kom",
+  title: "Next.js and Supabase Starter Kit",
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
-export default async function RootLayout({children}: {children: React.ReactNode;}) {
-  const {
-    data: {user},
-  } = await createClient().auth.getUser();
+const geistSans = Geist({
+  display: "swap",
+  subsets: ["latin"],
+});
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={geistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
-        <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-14 items-center">
-            <div className="mr-4 hidden md:flex">
-              <Link className="mr-6 flex items-center space-x-2" href="/">
-                <Monitor className="h-6 w-6"/>
-                <span className="hidden font-bold sm:inline-block">Z-Kom</span>
-              </Link>
-              <nav className="flex items-center space-x-6 text-sm font-medium">
-                <Link href="/products">Products</Link>
-                <Link href="/services">Services</Link>
-                <Link href="/about">About</Link>
-                <Link href="/contact">Contact</Link>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <main className="min-h-screen flex flex-col items-center">
+            <div className="flex-1 w-full flex flex-col gap-20 items-center">
+              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+                <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
+                  <div className="flex gap-5 items-center font-semibold">
+                    <Link href={"/"}>Next.js Supabase Starter</Link>
+                    <div className="flex items-center gap-2">
+                      <DeployButton />
+                    </div>
+                  </div>
+                  {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
+                </div>
               </nav>
-            </div>
-            <Button variant="outline" size="icon"
-                    className="mr-2 px-0 text-base hover:bg-transparent focus:ring-0 md:hidden">
-              <Menu className="h-5 w-5"/>
-              <span className="sr-only">Toggle Menu</span>
-            </Button>
-            <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-              <div className="w-full flex-1 md:w-auto md:flex-none">
-                <Input className="w-full md:w-[300px]" placeholder="Search products..." type="search"/>
+              <div className="flex flex-col gap-20 max-w-5xl p-5">
+                {children}
               </div>
-              <div className="flex items-center space-x-2">
-                {user ? (
-                  <>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="relative h-8 w-8 rounded-full">
-                          <User className="h-5 w-5"/>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56" align="end" forceMount>
-                        <DropdownMenuLabel className="font-normal">
-                          <div className="flex flex-col space-y-1">
-                            <p className="text-sm font-medium leading-none">Welcome,</p>
-                            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                          </div>
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuItem>
-                          Profile
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          Settings
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator/>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <form action={signOutAction}>
-                      <Button type="submit" variant="outline">
-                        Sign out
-                      </Button>
-                    </form>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="outline"><Link href="/sign-in">Sign in</Link></Button>
-                    <Button variant="outline"><Link href="/sign-up">Sign up</Link></Button>
-                  </>
-                )}
-                <Button variant="outline" size="icon">
-                  <ShoppingCart className="h-5 w-5"/>
-                  <span className="sr-only">Shopping Cart</span>
-                </Button>
-              </div>
+
+              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
+                <p>
+                  Powered by{" "}
+                  <a
+                    href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
+                    target="_blank"
+                    className="font-bold hover:underline"
+                    rel="noreferrer"
+                  >
+                    Supabase
+                  </a>
+                </p>
+                <ThemeSwitcher />
+              </footer>
             </div>
-          </div>
-        </nav>
-        <div className="flex flex-col">
-          <main className="flex-1">
-            {children}
           </main>
-        </div>
-        <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-          <p className="text-xs text-gray-500">© 2024 Z-Kom. All rights reserved.</p>
-          <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-            <Link className="text-xs hover:underline underline-offset-4" href="#">
-              Terms of Service
-            </Link>
-            <Link className="text-xs hover:underline underline-offset-4" href="#">
-              Privacy
-            </Link>
-          </nav>
-        </footer>
+        </ThemeProvider>
       </body>
     </html>
   );
