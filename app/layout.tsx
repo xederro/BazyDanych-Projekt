@@ -7,6 +7,7 @@ import "./globals.css";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
 import { Cpu } from 'lucide-react'
+import {createClient} from "@/utils/supabase/server";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -23,28 +24,13 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const productCategories = [
-  'dyski_twarde_HDD_i_SSD',
-  'karty_graficzne',
-  'procesory',
-  'plyty_glowne',
-  'obudowy_komputerowe',
-  'pamieci_RAM',
-  'zasilacze_komputerowe',
-  'chlodzenia_komputerowe',
-  'karty_dzwiekowe',
-  'karty_przechwytujace_wideo',
-  'karty_sieciowe',
-  'napedy_optyczne',
-  'akcesoria_do_dyskow',
-  'inne'
-]
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const { data: productCategories } = await supabase.from("categories").select();
   return (
     <html lang="en" className={geistSans.className} suppressHydrationWarning>
     <body className="bg-background text-foreground">
@@ -62,9 +48,9 @@ export default function RootLayout({
                   <Button variant="outline">Products</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {productCategories.map((category, index) => (
-                      <DropdownMenuItem key={index}>
-                        <a href="#" className="w-full">{category.replace(/_/g, ' ')}</a>
+                  {productCategories.map((category) => (
+                      <DropdownMenuItem key={category.category_id}>
+                        <a href={"/products/"+category.category_id} className="w-full">{category.name}</a>
                       </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
@@ -81,7 +67,7 @@ export default function RootLayout({
       </main>
 
       <footer className="bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <h2 className="text-lg font-semibold text-gray-900">Contact Us</h2>
