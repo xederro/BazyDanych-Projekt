@@ -4,6 +4,7 @@ import {useState} from 'react'
 import {Input} from "@/components/ui/input"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
 import {ChevronUp, ChevronDown} from 'lucide-react'
+import Link from "next/link";
 
 interface ProductsListProps {
   data?: [
@@ -60,8 +61,12 @@ export function ProductsList({data}: ProductsListProps) {
         <TableBody>
           {filteredAndSorted.map((cpu) => (
             <TableRow key={cpu.product_id}>
-              <TableCell>{cpu.name}</TableCell>
-              <TableCell>${cpu.price.toFixed(2)}</TableCell>
+                <TableCell>
+                  <Link href={"/product/"+cpu.product_id}>
+                    {cpu.name}
+                  </Link>
+                </TableCell>
+                <TableCell>${cpu.price.toFixed(2)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
