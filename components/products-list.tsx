@@ -66,7 +66,7 @@ export function ProductsList({data}: ProductsListProps) {
                     {cpu.name}
                   </Link>
                 </TableCell>
-                <TableCell>${cpu.price.toFixed(2)}</TableCell>
+                <TableCell>{cpu.price.toFixed(2)} zł</TableCell>
             </TableRow>
           ))}
         </TableBody>
