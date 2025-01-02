@@ -17,7 +17,7 @@ export function ProductDetails({product}: ProductProp) {
       <div className="grid md:grid-cols-1 gap-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-          <p className="text-2xl font-bold text-gray-900 mb-6">${product.price.toFixed(2)}</p>
+          <p className="text-2xl font-bold text-gray-900 mb-6">{product.price.toFixed(2)}zł</p>
           <div className="space-y-6">
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Description</h2>

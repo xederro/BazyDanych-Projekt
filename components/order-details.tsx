@@ -167,7 +167,7 @@ export function OrderDetails() {
               <div className="max-h-60 overflow-auto">
                 {filteredProducts.map(product => (
                   <div key={product.id} className="flex justify-between items-center py-2">
-                    <span>{product.name} - ${product.price.toFixed(2)}</span>
+                    <span>{product.name} - {product.price.toFixed(2)}zł</span>
                     <Button onClick={() => handleAddProduct(product)}>Add</Button>
                   </div>
                 ))}
@@ -202,8 +202,8 @@ export function OrderDetails() {
                   product.quantity
                 )}
               </TableCell>
-              <TableCell>${product.price.toFixed(2)}</TableCell>
-              <TableCell>${(product.quantity * product.price).toFixed(2)}</TableCell>
+              <TableCell>{product.price.toFixed(2)}zł</TableCell>
+              <TableCell>{(product.quantity * product.price).toFixed(2)}zł</TableCell>
               <TableCell>
                 <div className="flex space-x-2">
                   {editingProduct === product.id ? (
@@ -249,7 +249,7 @@ export function OrderDetails() {
       </Table>
 
       <div className="mt-6 text-right">
-        <p className="text-xl font-bold">Total Order Value: ${totalValue.toFixed(2)}</p>
+        <p className="text-xl font-bold">Total Order Value: {totalValue.toFixed(2)}zł</p>
       </div>
     </>
   )

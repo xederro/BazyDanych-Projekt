@@ -75,7 +75,7 @@ export default async function RootLayout({
               <p className="text-gray-600">Phone: +1 (123) 456-7890</p>
             </div>
             <div className="text-gray-600">
-              &copy; 2024 komputery.express. All rights reserved.
+              &copy; 2025 komputery.express. All rights reserved.
             </div>
           </div>
         </div>

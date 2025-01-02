@@ -124,7 +124,7 @@ export function ProductDetailsKierownik({product}: ProductProp) {
               className="text-2xl font-bold mb-6"
             />
           ) : (
-            <p className="text-2xl font-bold text-gray-900 mb-6">${changes.price.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-gray-900 mb-6">{changes.price.toFixed(2)}zł</p>
           )}
           <div className="space-y-6">
             <section>

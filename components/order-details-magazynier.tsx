@@ -224,7 +224,7 @@ export function OrderDetailsMagazynier() {
       </div>
 
       <div className="mt-6 text-right">
-        <p className="text-xl font-bold">Total Order Value: ${totalValue.toFixed(2)}</p>
+        <p className="text-xl font-bold">Total Order Value: {totalValue.toFixed(2)}zł</p>
       </div>
     </>
   )

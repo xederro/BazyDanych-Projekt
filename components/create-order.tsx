@@ -189,7 +189,7 @@ export function CreateOrder() {
                   <p>NIP: {selectedUser.nip}</p>
                 </div>
               )}
-              <div className="text-xl font-bold mb-4">Total Order Value: ${totalValue.toFixed(2)}</div>
+              <div className="text-xl font-bold mb-4">Total Order Value: {totalValue.toFixed(2)}zł</div>
               <div className="flex justify-center">
                 <Button onClick={() => setIsAddingProduct(true)} className="bg-violet-600 text-white hover:bg-violet-700">
                   <Plus className="mr-2 h-4 w-4" /> Add Product
@@ -227,7 +227,7 @@ export function CreateOrder() {
               <div className="max-h-60 overflow-auto">
                 {filteredProducts.map(product => (
                   <div key={product.id} className="flex justify-between items-center py-2">
-                    <span>{product.name} - ${product.price.toFixed(2)}</span>
+                    <span>{product.name} - {product.price.toFixed(2)}zł</span>
                     <Button onClick={() => handleAddProduct(product)}>Add</Button>
                   </div>
                 ))}
@@ -256,8 +256,8 @@ export function CreateOrder() {
                   <TableRow key={product.id}>
                     <TableCell>{product.name}</TableCell>
                     <TableCell>{product.quantity}</TableCell>
-                    <TableCell>${product.price.toFixed(2)}</TableCell>
-                    <TableCell>${(product.quantity * product.price).toFixed(2)}</TableCell>
+                    <TableCell>{product.price.toFixed(2)}zł</TableCell>
+                    <TableCell>{(product.quantity * product.price).toFixed(2)}zł</TableCell>
                     <TableCell>
                       <Button onClick={() => handleRemoveProduct(product.id)} size="sm" variant="outline">
                         <Trash2 className="h-4 w-4" />

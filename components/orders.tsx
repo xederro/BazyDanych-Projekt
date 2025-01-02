@@ -73,7 +73,7 @@ export function Orders() {
               <TableCell>{order.id}</TableCell>
               <TableCell>{order.date}</TableCell>
               <TableCell>{order.status}</TableCell>
-              <TableCell>${order.totalCost.toFixed(2)}</TableCell>
+              <TableCell>{order.totalCost.toFixed(2)}zł</TableCell>
             </TableRow>
           ))}
         </TableBody>

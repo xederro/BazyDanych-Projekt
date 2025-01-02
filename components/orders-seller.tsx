@@ -108,7 +108,7 @@ export function OrdersSeller() {
               <TableCell>{order.date}</TableCell>
               <TableCell>{order.customer}</TableCell>
               <TableCell>{order.status}</TableCell>
-              <TableCell>${order.totalCost.toFixed(2)}</TableCell>
+              <TableCell>{order.totalCost.toFixed(2)}zł</TableCell>
               <TableCell>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>

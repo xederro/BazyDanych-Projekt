@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import Link from "next/link";
 
 export function WelcomePageComponent() {
   return (
@@ -22,8 +23,8 @@ export function WelcomePageComponent() {
               Your one-stop shop for premium computer components and accessories
             </p>
             <div className="mt-10 flex justify-center">
-              <Button size="lg" className="bg-white text-violet-600 hover:bg-gray-100">
-                Shop Now <ChevronRight className="ml-2 h-4 w-4" />
+              <Button asChild size="lg" className="bg-white text-violet-600 hover:bg-gray-100">
+                <Link href="/products">Shop Now<ChevronRight className="ml-2 h-4 w-4" /></Link>
               </Button>
             </div>
           </div>
