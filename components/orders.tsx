@@ -12,21 +12,22 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const initialOrders = [
-  { id: 'ORD001', date: '2024-03-01', status: 'Delivered', totalCost: 1299.99 },
-  { id: 'ORD002', date: '2024-03-05', status: 'Processing', totalCost: 799.50 },
-  { id: 'ORD003', date: '2024-03-10', status: 'Shipped', totalCost: 2499.99 },
-  { id: 'ORD004', date: '2024-03-15', status: 'Processing', totalCost: 599.99 },
-  { id: 'ORD005', date: '2024-03-20', status: 'Delivered', totalCost: 1799.99 },
-]
+interface OrdersProp {
+  ordersList?:
+    [{
+      order_id: number,
+      date: number,
+      status: string
+    }]
+}
 
-export function Orders() {
-  const [orders, setOrders] = useState(initialOrders)
+export function Orders({ordersList}: OrdersProp) {
+  const [orders, setOrders] = useState(ordersList)
   const [filterCode, setFilterCode] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
   const filteredAndSortedOrders = orders
-    .filter(order => order.id.toLowerCase().includes(filterCode.toLowerCase()))
+    .filter(order => order.order_id.toString().toLowerCase().includes(filterCode.toLowerCase()))
     .sort((a, b) => {
       const dateA = new Date(a.date).getTime()
       const dateB = new Date(b.date).getTime()
@@ -64,16 +65,14 @@ export function Orders() {
               </button>
             </TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Total Cost</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredAndSortedOrders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.id}</TableCell>
+            <TableRow key={order.order_id}>
+              <TableCell>{order.order_id}</TableCell>
               <TableCell>{order.date}</TableCell>
               <TableCell>{order.status}</TableCell>
-              <TableCell>{order.totalCost.toFixed(2)}zł</TableCell>
             </TableRow>
           ))}
         </TableBody>

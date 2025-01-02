@@ -55,7 +55,9 @@ export default async function RootLayout({
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button variant="outline">Orders</Button>
+              <Button variant="outline" asChild>
+                <Link href="/order">Orders</Link>
+              </Button>
               {!hasEnvVars ? <EnvVarWarning/> : <HeaderAuth/>}
             </nav>
           </div>
