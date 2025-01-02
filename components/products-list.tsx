@@ -21,13 +21,23 @@ interface ProductsListProps {
 export function ProductsList({data}: ProductsListProps) {
   const [filter, setFilter] = useState('')
   const [sortOrder, setSortOrder] = useState('asc')
+  const [nameSortOrder, setNameSortOrder] = useState('asc')
+  const [whichSort, setWhichSort] = useState('name')
 
-  const filteredAndSorted = data
+  const filteredAndSorted = whichSort === 'price' ? data
     ?.filter((products: { name: string }) => products.name.toLowerCase().includes(filter.toLowerCase()))
-    .sort((a, b) => sortOrder === 'asc' ? a.price - b.price : b.price - a.price)
+    .sort((a, b) => sortOrder === 'asc' ? a.price - b.price : b.price - a.price) :
+    data?.filter((products: { name: string }) => products.name.toLowerCase().includes(filter.toLowerCase()))
+    .sort((a, b) => nameSortOrder === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name))
 
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+    setWhichSort('price')
+  }
+
+  const toggleNameSortOrder = () => {
+    setNameSortOrder(nameSortOrder === 'asc' ? 'desc' : 'asc')
+    setWhichSort('name')
   }
 
   return (
@@ -45,14 +55,23 @@ export function ProductsList({data}: ProductsListProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
+            <TableHead>
+              <button onClick={toggleNameSortOrder} className="flex items-center">
+                Name
+                {nameSortOrder === 'asc' ? (
+                    <ChevronUp className="ml-1 h-4 w-4"/>
+                ) : (
+                    <ChevronDown className="ml-1 h-4 w-4"/>
+                )}
+              </button>
+            </TableHead>
             <TableHead>
               <button onClick={toggleSortOrder} className="flex items-center">
                 Price
                 {sortOrder === 'asc' ? (
-                  <ChevronUp className="ml-1 h-4 w-4"/>
+                    <ChevronUp className="ml-1 h-4 w-4"/>
                 ) : (
-                  <ChevronDown className="ml-1 h-4 w-4"/>
+                    <ChevronDown className="ml-1 h-4 w-4"/>
                 )}
               </button>
             </TableHead>
