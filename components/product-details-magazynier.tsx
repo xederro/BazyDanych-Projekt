@@ -36,10 +36,9 @@ export function ProductDetailsMagazynier({product, units}: ProductProp) {
   const addUnit = async () => {
     try {
       // TODO: zrobic by to sie kurde dobrze robilo nazwa jakiś nwm input xd bo bez tego troche sus
-      // TODO: nie updatuje się ui z jakiejść przyczyny ??????
       const {error} = await supabase.from("units").insert({unit_id: "abecadlo", product_id: product.product_id});
-      if (!!error) throw error;
-      setProductCopies([...productCopies, { unit_id: "abecadlo", status: "In Stock" }])
+      if (error) throw error;
+      setProductCopies((prevCopies) => [...prevCopies, { unit_id: "abecadlo", status: "In Stock" }]);
     } catch (error) {
       console.error(error)
     }
@@ -49,7 +48,7 @@ export function ProductDetailsMagazynier({product, units}: ProductProp) {
     try {
       const {error} = await supabase.from("units").delete().eq("unit_id", serialNumber);
       if (!!error) throw error;
-      setProductCopies(productCopies.filter(copy => copy.unit_id !== serialNumber))
+      setProductCopies((prevCopies) => prevCopies.filter(copy => copy.unit_id !== serialNumber))
     } catch (error) {
       console.error(error)
     }
@@ -98,7 +97,7 @@ export function ProductDetailsMagazynier({product, units}: ProductProp) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {units.map((unit) => (
+              {productCopies.map((unit) => (
                 <TableRow key={unit.unit_id}>
                   <TableCell>{unit.unit_id}</TableCell>
                   <TableCell>{unit.status}</TableCell>
