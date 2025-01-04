@@ -8,10 +8,14 @@ export default async function Product({
   params: Promise<{ id: number }>
 }) {
   const supabase = await createClient();
-  const id = (await params).id??1
-  const { data: products } = await supabase.from("all_products_in_category_view").select()
-    .filter("category_id", "eq", id>0?id:1)
-    .filter("available", "eq", true)
+  const id = (await params).id??0
+  let query = supabase.from("all_products_in_category_view").select().filter("available", "eq", true);
+
+  if (id > 0) {
+    query = query.filter("category_id", "eq", id);
+  }
+
+  const { data: products } = await query;
   return (
     <ProductsList data={products??[]}/>
   );
