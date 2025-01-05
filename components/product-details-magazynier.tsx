@@ -36,13 +36,13 @@ export function ProductDetailsMagazynier({ product, units }: ProductProp) {
   const supabase = createClient();
 
   const addUnit = async () => {
-    if (!unitId) return; // Ensure unitId is provided
+    if (!unitId) return;
     try {
       const { error } = await supabase.from("units").insert({ unit_id: unitId, product_id: product.product_id });
       if (error) throw error;
-      setProductCopies((prevCopies) => [...prevCopies, { unit_id: unitId, status: "In Stock" }]);
-      setUnitId(''); // Clear the input field after successful insertion
-      setIsModalOpen(false); // Close the modal
+      setProductCopies((prevCopies) => [...prevCopies, { unit_id: unitId, status: "available" }]);
+      setUnitId('');
+      setIsModalOpen(false);
     } catch (error) {
       console.error(error);
     }
@@ -130,7 +130,7 @@ export function ProductDetailsMagazynier({ product, units }: ProductProp) {
                 />
                 <div className="flex justify-end space-x-4">
                   <Button onClick={() => setIsModalOpen(false)} variant="outline">Cancel</Button>
-                  <Button onClick={addUnit} variant="solid">Add</Button>
+                  <Button onClick={addUnit} variant="outline">Add</Button>
                 </div>
               </div>
             </div>
