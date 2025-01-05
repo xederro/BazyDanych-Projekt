@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import Link from "next/link";
 
 interface OrdersProp {
   ordersList?:
@@ -70,7 +71,7 @@ export function Orders({ordersList}: OrdersProp) {
         <TableBody>
           {filteredAndSortedOrders.map((order) => (
             <TableRow key={order.order_id}>
-              <TableCell>{order.order_id}</TableCell>
+              <TableCell><Link href={"/order/details/"+order.order_id}>{order.order_id}</Link></TableCell>
               <TableCell>{order.date}</TableCell>
               <TableCell>{order.status}</TableCell>
             </TableRow>

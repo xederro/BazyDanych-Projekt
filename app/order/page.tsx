@@ -5,14 +5,15 @@ import {createClient} from "@/utils/supabase/server";
 
 export default async function Order() {
   const supabase = await createClient();
-  const { data: orders } = await supabase.from("orders").select()
   if (randomInt(0,2)==0) {
+    const { data: orders } = await supabase.from("orders").select()
     return (
       <Orders ordersList={orders??[]}/>
     );
   } else {
+    const { data: orders } = await supabase.from("sprzedawca_orders_view").select()
     return (
-      <OrdersSeller/>
+      <OrdersSeller ordersList={orders??[]}/>
     );
   }
 }

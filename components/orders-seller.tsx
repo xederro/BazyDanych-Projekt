@@ -23,22 +23,31 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {createClient} from "@/utils/supabase/client";
+import {useRouter} from "next/navigation";
+import Link from "next/link";
 
-const initialOrders = [
-  { id: 'ORD001', date: '2024-03-01', status: 'Submitted', totalCost: 1299.99, customer: 'John Doe' },
-  { id: 'ORD002', date: '2024-03-05', status: 'Processing', totalCost: 799.50, customer: 'Jane Smith' },
-  { id: 'ORD003', date: '2024-03-10', status: 'Shipped', totalCost: 2499.99, customer: 'Bob Johnson' },
-  { id: 'ORD004', date: '2024-03-15', status: 'Processing', totalCost: 599.99, customer: 'Alice Brown' },
-  { id: 'ORD005', date: '2024-03-20', status: 'Submitted', totalCost: 1799.99, customer: 'Charlie Wilson' },
-]
+interface OrdersProp {
+  ordersList?:
+    [Order]
+}
 
-export function OrdersSeller() {
-  const [orders, setOrders] = useState(initialOrders)
+interface Order {
+  client_name: string,
+  nip: string,
+  order_id: number,
+  date: number,
+  status: string,
+  cost: number,
+}
+
+export function OrdersSeller({ordersList}: OrdersProp) {
+  const [orders, setOrders] = useState(ordersList)
   const [filterCode, setFilterCode] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
   const filteredAndSortedOrders = orders
-    .filter(order => order.id.toLowerCase().includes(filterCode.toLowerCase()))
+    .filter(order => (order.order_id.toString()+order.client_name+order.nip+order.status).toLowerCase().includes(filterCode.toLowerCase()))
     .sort((a, b) => {
       const dateA = new Date(a.date).getTime()
       const dateB = new Date(b.date).getTime()
@@ -49,19 +58,21 @@ export function OrdersSeller() {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
   }
 
+  const supabase = createClient();
+  const router = useRouter();
+
   const addOrder = () => {
-    const newOrder = {
-      id: `ORD${String(orders.length + 1).padStart(3, '0')}`,
-      date: new Date().toISOString().split('T')[0],
-      status: 'Submitted',
-      totalCost: 0,
-      customer: 'New Customer'
-    }
-    setOrders([...orders, newOrder])
+    router.push("/order/create");
   }
 
-  const removeOrder = (id: string) => {
-    setOrders(orders.filter(order => order.id !== id))
+  const removeOrder = async (id: string) => {
+    try {
+      const {error} = await supabase.from("orders").delete().eq("order_id", id);
+      if (!!error) throw error;
+      setOrders(orders.filter(order => order.order_id !== id))
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -96,6 +107,7 @@ export function OrdersSeller() {
               </button>
             </TableHead>
             <TableHead>Customer</TableHead>
+            <TableHead>NIP</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Total Cost</TableHead>
             <TableHead>Action</TableHead>
@@ -103,12 +115,13 @@ export function OrdersSeller() {
         </TableHeader>
         <TableBody>
           {filteredAndSortedOrders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.id}</TableCell>
+            <TableRow key={order.order_id}>
+              <TableCell><Link href={"/order/details/"+order.order_id}>{order.order_id}</Link></TableCell>
               <TableCell>{order.date}</TableCell>
-              <TableCell>{order.customer}</TableCell>
+              <TableCell>{order.client_name}</TableCell>
+              <TableCell>{order.nip}</TableCell>
               <TableCell>{order.status}</TableCell>
-              <TableCell>{order.totalCost.toFixed(2)}zł</TableCell>
+              <TableCell>{order.cost.toFixed(2)}zł</TableCell>
               <TableCell>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -125,7 +138,7 @@ export function OrdersSeller() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => removeOrder(order.id)}>Remove</AlertDialogAction>
+                      <AlertDialogAction onClick={() => removeOrder(order.order_id)}>Remove</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
