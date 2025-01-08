@@ -2,7 +2,7 @@
 
 import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
-import { headers } from "next/headers";
+import {cookies, headers} from "next/headers";
 import { redirect } from "next/navigation";
 
 export const signUpAction = async (formData: FormData) => {
@@ -53,7 +53,23 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/protected");
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    const { data: role } = await supabase.from('user_roles').select('role').eq('id', user?.id).single()
+    const cookieStore = await cookies()
+    cookieStore.set({
+      name: 'role',
+      value: role.role,
+      httpOnly: true,
+      path: '/',
+      secure: true,
+    })
+  }
+
+  return redirect("/");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -67,7 +83,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?redirect_to=/protected/reset-password`,
+    redirectTo: `${origin}/auth/callback`,
   });
 
   if (error) {
@@ -130,5 +146,11 @@ export const resetPasswordAction = async (formData: FormData) => {
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
+  const cookieStore = await cookies()
+  cookieStore.set({
+    name: 'role',
+    value: '',
+    expires: 0,
+  })
   return redirect("/sign-in");
 };

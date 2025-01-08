@@ -8,6 +8,7 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import {Button} from "@/components/ui/button";
 import { Cpu } from 'lucide-react'
 import {createClient} from "@/utils/supabase/server";
+import {cookies} from "next/headers";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -29,6 +30,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies()
+  const role = cookieStore.get("role")
   const supabase = await createClient();
   const { data: productCategories } = await supabase.from("categories").select();
     return (
@@ -58,9 +61,18 @@ export default async function RootLayout({
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Button variant="outline" asChild>
-                  <Link href="/order">Orders</Link>
-                </Button>
+                {
+                  role?role.value == "kierownik"?
+                    <Button variant="outline" asChild>
+                      <Link href="/report">Report</Link>
+                    </Button>
+                    :
+                    <Button variant="outline" asChild>
+                      <Link href="/order">Orders</Link>
+                    </Button>
+                    :
+                    <></>
+                }
                 {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
               </nav>
             </div>

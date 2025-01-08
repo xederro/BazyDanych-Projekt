@@ -1,5 +1,4 @@
 import {createClient} from "@/utils/supabase/server";
-import {notFound} from "next/navigation";
 import {OrderDetails} from "@/components/order-details";
 import {OrderDetailsMagazynier} from "@/components/order-details-magazynier";
 import {randomInt} from "node:crypto";
