@@ -29,87 +29,71 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {createClient} from "@/utils/supabase/client";
 
-const initialOrderDetails = {
-  clientName: "Jane Smith",
-  orderId: "ORD002",
-  date: "2024-03-05",
-  status: "Processing",
-  products: [
-    { 
-      id: 1, 
-      name: "AMD Ryzen 9 5950X", 
-      quantity: 2, 
-      price: 699.99,
-      units: [
-        { serialNumber: "RYZ5950X-001", status: "In Stock" },
-        { serialNumber: "RYZ5950X-002", status: "In Stock" },
-      ]
-    },
-    { 
-      id: 2, 
-      name: "NVIDIA GeForce RTX 3080", 
-      quantity: 1, 
-      price: 699.99,
-      units: [
-        { serialNumber: "RTX3080-001", status: "In Stock" },
-      ]
-    },
-    { 
-      id: 3, 
-      name: "Samsung 970 EVO Plus 1TB", 
-      quantity: 2, 
-      price: 149.99,
-      units: [
-        { serialNumber: "SAM970EVO-001", status: "In Stock" },
-        { serialNumber: "SAM970EVO-002", status: "In Stock" },
-      ]
-    },
-  ]
+interface OrderProp {
+  products:[{
+    name: string,
+    count: number,
+    product_id: number,
+    order_id: number,
+    units: string[]
+  }],
+  order: {
+    order_id: number,
+    date: number,
+    status: string
+  }
 }
 
-export function OrderDetailsMagazynier() {
-  const [orderDetails, setOrderDetails] = useState(initialOrderDetails)
+export function OrderDetailsMagazynier({products, order}: OrderProp) {
+  const supabase = createClient();
+  const [productsDetails, setProductsDetails] = useState(products.map(product => {return {...product, units: product.units.filter(unit => unit !== null)}}))
   const [newSerialNumber, setNewSerialNumber] = useState('')
   const [expandedProducts, setExpandedProducts] = useState<string[]>([])
 
-  const totalValue = orderDetails.products.reduce((sum, product) => sum + product.quantity * product.price, 0)
-
-  const handleAddUnit = () => {
+  const handleAddUnit = async () => {
     if (newSerialNumber.trim() === '') return
+    try {
+      const {data, error} = await supabase.from("units").update({order_id: order.order_id}).is("order_id", null).eq("unit_id", newSerialNumber).select().maybeSingle();
+      if (!!error) throw error;
 
-    const updatedProducts = orderDetails.products.map(product => {
-      if (product.units.length < product.quantity) {
-        return {
-          ...product,
-          units: [...product.units, { serialNumber: newSerialNumber, status: "In Stock" }]
+      const updatedProducts = productsDetails.map(product => {
+        if (product.product_id === data.product_id) {
+          return {
+            ...product,
+            units: [...product.units, newSerialNumber]
+          }
         }
-      }
-      return product
-    })
+        return product
+      })
 
-    setOrderDetails(prevDetails => ({
-      ...prevDetails,
-      products: updatedProducts
-    }))
-    setNewSerialNumber('')
+      setProductsDetails(updatedProducts)
+      setNewSerialNumber('')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  const handleRemoveUnit = (productId: number, serialNumber: string) => {
-    const updatedProducts = orderDetails.products.map(product => {
-      if (product.id === productId) {
-        return {
-          ...product,
-          units: product.units.filter(unit => unit.serialNumber !== serialNumber)
-        }
-      }
-      return product
-    })
+  const handleRemoveUnit = async (productId: number, serialNumber: string) => {
+    try {
+      const {error} = await supabase.from("units").update({order_id: null}).eq("unit_id", serialNumber).eq("order_id", order.order_id);
+      if (!!error) throw error;
 
-    setOrderDetails(prevDetails => ({
-      ...prevDetails,
-      products: updatedProducts
-    }))
+      const updatedProducts = productsDetails.map(product => {
+        if (product.product_id === productId) {
+          return {
+            ...product,
+            units: product.units.filter(unit => unit !== serialNumber)
+          }
+        }
+        return product
+      })
+
+      setProductsDetails(updatedProducts)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const toggleProductExpansion = (productId: string) => {
@@ -132,20 +116,16 @@ export function OrderDetailsMagazynier() {
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Client Name</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{orderDetails.clientName}</dd>
-            </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Order ID</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{orderDetails.orderId}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.order_id}</dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Date</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{orderDetails.date}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{ new Date(order.date).toLocaleDateString() }</dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Status</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{orderDetails.status}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.status}</dd>
             </div>
           </dl>
         </div>
@@ -166,13 +146,13 @@ export function OrderDetailsMagazynier() {
           </Button>
         </div>
         <Accordion type="multiple" value={expandedProducts} onValueChange={setExpandedProducts}>
-          {orderDetails.products.map((product) => (
-            <AccordionItem key={product.id} value={product.id.toString()}>
-              <AccordionTrigger onClick={() => toggleProductExpansion(product.id.toString())}>
+          {productsDetails.map((product) => (
+            <AccordionItem key={product.product_id} value={product.product_id.toString()}>
+              <AccordionTrigger onClick={() => toggleProductExpansion(product.product_id.toString())}>
                 <div className="flex justify-between items-center w-full">
                   <span>{product.name}</span>
                   <span className="text-sm text-gray-500">
-                      {product.units.length} / {product.quantity} units
+                      {product.units.length} / {product.count} units
                     </span>
                 </div>
               </AccordionTrigger>
@@ -181,15 +161,13 @@ export function OrderDetailsMagazynier() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Serial Number</TableHead>
-                      <TableHead>Status</TableHead>
                       <TableHead>Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {product.units.map((unit) => (
-                      <TableRow key={unit.serialNumber}>
-                        <TableCell>{unit.serialNumber}</TableCell>
-                        <TableCell>{unit.status}</TableCell>
+                      <TableRow key={unit}>
+                        <TableCell>{unit}</TableCell>
                         <TableCell>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -206,7 +184,7 @@ export function OrderDetailsMagazynier() {
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleRemoveUnit(product.id, unit.serialNumber)}>
+                                <AlertDialogAction onClick={() => handleRemoveUnit(product.product_id, unit)}>
                                   Remove
                                 </AlertDialogAction>
                               </AlertDialogFooter>
@@ -221,10 +199,6 @@ export function OrderDetailsMagazynier() {
             </AccordionItem>
           ))}
         </Accordion>
-      </div>
-
-      <div className="mt-6 text-right">
-        <p className="text-xl font-bold">Total Order Value: {totalValue.toFixed(2)}zł</p>
       </div>
     </>
   )

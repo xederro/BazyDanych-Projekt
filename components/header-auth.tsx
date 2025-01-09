@@ -44,7 +44,7 @@ export default async function AuthButton() {
     <>
       <div className="flex items-center">
         <User className="h-5 w-5 text-violet-600 mr-2"/>
-        <span className="text-sm font-medium text-gray-700">{user.email}!</span>
+        <span className="text-sm font-medium text-gray-700">{user.email}</span>
       </div>
       <form action={signOutAction}>
         <Button type="submit" variant={"outline"}>

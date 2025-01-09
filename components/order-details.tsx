@@ -9,20 +9,27 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const initialOrderDetails = {
-  clientName: "Jane Smith",
-  orderId: "ORD002",
-  date: "2024-03-05",
-  status: "Processing",
-  products: [
-    { id: 1, name: "AMD Ryzen 9 5950X", quantity: 1, price: 699.99 },
-    { id: 2, name: "NVIDIA GeForce RTX 3080", quantity: 1, price: 699.99 },
-    { id: 3, name: "Samsung 970 EVO Plus 1TB", quantity: 2, price: 149.99 },
-  ]
+interface OrderProp {
+  order: {
+    order_id: number,
+    date: number,
+    status: string,
+    apartment_number?: string,
+    home_number: string,
+    place: string,
+    street?: string,
+    zip: string,
+    products:[{
+      product: string,
+      count: number,
+      price: number
+    }],
+  }
 }
 
-export function OrderDetails() {
-  const totalValue = initialOrderDetails.products.reduce((sum, product) => sum + product.quantity * product.price, 0)
+export function OrderDetails({order}:OrderProp) {
+  console.log(order)
+  const totalValue = order.products.reduce((sum, product) => sum + product.count * product.price, 0)
 
   return (
     <>
@@ -36,27 +43,32 @@ export function OrderDetails() {
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Client Name</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{initialOrderDetails.clientName}</dd>
-            </div>
-            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Order ID</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{initialOrderDetails.orderId}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.order_id}</dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Date</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{initialOrderDetails.date}</dd>
+              <dd
+                className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{new Date(order.date).toLocaleDateString()}</dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Status</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{initialOrderDetails.status}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.status}</dd>
+            </div>
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Address 1</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.street ? order.street + " " : ""}{order.home_number}{order.apartment_number ? "/" + order.apartment_number : ""}</dd>
+            </div>
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Address 2</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.zip} {order.place}</dd>
             </div>
           </dl>
         </div>
       </div>
 
       <div className="mt-8 flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Ordered Products</h2>
+      <h2 className="text-2xl font-bold text-gray-900">Ordered Products</h2>
       </div>
       <Table className="mt-4">
         <TableHeader>
@@ -68,14 +80,14 @@ export function OrderDetails() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {initialOrderDetails.products.map((product) => (
-            <TableRow key={product.id}>
-              <TableCell>{product.name}</TableCell>
+          {order.products.map((product) => (
+            <TableRow key={product.product}>
+              <TableCell>{product.product}</TableCell>
               <TableCell>
-                {product.quantity}
+                {product.count}
               </TableCell>
               <TableCell>{product.price.toFixed(2)}zł</TableCell>
-              <TableCell>{(product.quantity * product.price).toFixed(2)}zł</TableCell>
+              <TableCell>{(product.count * product.price).toFixed(2)}zł</TableCell>
             </TableRow>
           ))}
         </TableBody>
