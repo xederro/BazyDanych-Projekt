@@ -29,7 +29,7 @@ export default async function AuthButton({mobile}:{mobile:boolean}) {
             <Button
               asChild
               size="sm"
-              variant={"outline"}
+              variant={"default"}
               disabled
               className="opacity-75 cursor-none pointer-events-none"
             >

@@ -92,14 +92,14 @@ export default async function RootLayout({
                   <NavigationMenu>
                     <NavigationMenuList>
                       <NavigationMenuItem>
-                        <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+                        <NavigationMenuTrigger className="border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground">Products</NavigationMenuTrigger>
                         <NavigationMenuContent>
                           <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[300px] lg:grid-cols-[.75fr_1fr]">
                             <li className="row-span-1 col-span-2">
                               <NavigationMenuLink asChild>
                                 <a
                                   className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-violet-500 to-violet-900 p-6 no-underline outline-none focus:shadow-md"
-                                  href="/"
+                                  href="/products"
                                 >
                                   <Cpu className="h-6 w-6 text-white" />
                                   <div className="mt-4 mb-2 text-lg font-medium text-white">
