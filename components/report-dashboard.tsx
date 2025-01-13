@@ -205,7 +205,7 @@ export function ReportDashboard({report, in_stock}: ReportProps) {
             <CardDescription>Current inventory levels</CardDescription>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[300px] w-[500px] rounded-md border p-4">
+            <ScrollArea className="h-[300px] w-[40%] min-w-[350px] rounded-md border p-4">
               <Table>
                 <TableHeader>
                   <TableRow>
