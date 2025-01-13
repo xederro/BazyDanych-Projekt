@@ -42,14 +42,14 @@ export function ProductsList({data}: ProductsListProps) {
 
   return (
     <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Products</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Products</h1>
       <div className="mb-4">
         <Input
           type="text"
           placeholder="Filter by name"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="max-w-xs"
+          className="max-w-xs mx-auto"
         />
       </div>
       <Table>
@@ -65,7 +65,7 @@ export function ProductsList({data}: ProductsListProps) {
                 )}
               </button>
             </TableHead>
-            <TableHead>
+            <TableHead className="flex place-self-end">
               <button onClick={toggleSortOrder} className="flex items-center">
                 Price
                 {sortOrder === 'asc' ? (
@@ -78,14 +78,14 @@ export function ProductsList({data}: ProductsListProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredAndSorted.map((cpu) => (
-            <TableRow key={cpu.product_id}>
+          {filteredAndSorted.map((product) => (
+            <TableRow key={product.product_id}>
                 <TableCell>
-                  <Link href={"/product/"+cpu.product_id}>
-                    {cpu.name}
+                  <Link href={"/product/"+product.product_id}>
+                    {product.name}
                   </Link>
                 </TableCell>
-                <TableCell>{cpu.price.toFixed(2)} zł</TableCell>
+                <TableCell className="text-end">{product.price.toFixed(2)} zł</TableCell>
             </TableRow>
           ))}
         </TableBody>

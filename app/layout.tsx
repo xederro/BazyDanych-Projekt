@@ -148,7 +148,7 @@ export default async function RootLayout({
           </div>
         </header>
 
-        <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-grow  mx-auto px-4 sm:px-6 lg:px-8 py-8 w-2/5 min-w-80 ">
           {children}
         </main>
 
