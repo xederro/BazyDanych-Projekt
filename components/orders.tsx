@@ -72,7 +72,7 @@ export function Orders({ordersList}: OrdersProp) {
           {filteredAndSortedOrders.map((order) => (
             <TableRow key={order.order_id}>
               <TableCell><Link href={"/order/details/"+order.order_id}>{order.order_id}</Link></TableCell>
-              <TableCell>{order.date}</TableCell>
+              <TableCell>{new Date(order.date).toLocaleString()}</TableCell>
               <TableCell>{order.status}</TableCell>
             </TableRow>
           ))}
