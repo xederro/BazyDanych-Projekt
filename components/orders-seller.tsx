@@ -78,7 +78,7 @@ export function OrdersSeller({ordersList}: OrdersProp) {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">All Orders</h1>
+        <h1 className="text-3xl font-bold text-gray-900">All Orders:</h1>
         <Button onClick={addOrder} className="bg-violet-600 hover:bg-violet-700 text-white">
           <Plus className="mr-2 h-4 w-4" /> Add Order
         </Button>
@@ -89,7 +89,7 @@ export function OrdersSeller({ordersList}: OrdersProp) {
           placeholder="Filter by order code"
           value={filterCode}
           onChange={(e) => setFilterCode(e.target.value)}
-          className="max-w-xs"
+          className="max-w-xs mx-auto"
         />
       </div>
       <Table>

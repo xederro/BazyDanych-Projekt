@@ -40,15 +40,15 @@ export function Orders({ordersList}: OrdersProp) {
   }
 
   return (
-    <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Your Orders</h1>
+    <div className="w-[30vw] min-w-[340px] max-w-[600px]">
+      <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Your Orders</h1>
       <div className="mb-4">
         <Input
           type="text"
           placeholder="Filter by order code"
           value={filterCode}
           onChange={(e) => setFilterCode(e.target.value)}
-          className="max-w-xs"
+          className="max-w-xs mx-auto"
         />
       </div>
       <Table>
@@ -78,6 +78,6 @@ export function Orders({ordersList}: OrdersProp) {
           ))}
         </TableBody>
       </Table>
-    </>
+    </div>
   )
 }

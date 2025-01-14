@@ -41,8 +41,8 @@ export function ProductsList({data}: ProductsListProps) {
   }
 
   return (
-    <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Products</h1>
+    <div className="w-[30vw] min-w-[340px] max-w-[600px]">
+      <h1 className="text-3xl font-bold text-gray-900 text-center">Products</h1>
       <div className="mb-4">
         <Input
           type="text"
@@ -65,8 +65,8 @@ export function ProductsList({data}: ProductsListProps) {
                 )}
               </button>
             </TableHead>
-            <TableHead className="flex place-self-end">
-              <button onClick={toggleSortOrder} className="flex items-center">
+            <TableHead>
+              <button onClick={toggleSortOrder} className="flex place-self-end">
                 Price
                 {sortOrder === 'asc' ? (
                     <ChevronUp className="ml-1 h-4 w-4"/>
@@ -90,6 +90,6 @@ export function ProductsList({data}: ProductsListProps) {
           ))}
         </TableBody>
       </Table>
-    </>
+    </div>
   )
 }
