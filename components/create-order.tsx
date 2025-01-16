@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {createClient} from "@/utils/supabase/client";
+import {useRouter} from "next/navigation";
 
 type Product = {
   product_id: number,
@@ -62,6 +63,7 @@ export function CreateOrder({clients, productsList}: CreateOrderProps) {
   productsList.map(product => product.quantity = 0)
 
   const supabase = createClient();
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([])
   const [users, setUsers] = useState(clients)
   const [addresses, setAddresses] = useState<Address[] | null>(null)
@@ -154,7 +156,6 @@ export function CreateOrder({clients, productsList}: CreateOrderProps) {
     setAddresses([...addresses, createdAddress])
     setSelectedAddress(createdAddress)
     setNewAddress({ apartment_number: '', home_number: '', place: '', street: '', zip: '' })
-    setNewAddress({ apartment_number: null, home_number: '', place: '', street: null, zip: '' })
   }
 
   const handleCreateOrder = async () => {
@@ -177,6 +178,8 @@ export function CreateOrder({clients, productsList}: CreateOrderProps) {
     if (error) {
       console.error(error);
     }
+
+    router.push("/order");
   }
 
   return (
