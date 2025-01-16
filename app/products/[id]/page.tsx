@@ -18,7 +18,6 @@ export default async function Product({
   let query = supabase.from("all_products_in_category_view").select().filter("available", "eq", true)
     .filter("category_id", "eq", id);
 
-
   const { data: products } = await query;
   return (
     <ProductsList data={products??[]}/>

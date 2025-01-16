@@ -14,6 +14,11 @@ export default async function Order() {
     return (
       <OrdersSeller ordersList={orders??[]}/>
     );
+  } else if (role?.value=='kierownik') {
+    const { data: orders } = await supabase.from("orders").select()
+    return (
+      <Orders ordersList={orders??[]}/>
+    );
   } else if (role?.value=='magazynier') {
     const { data: orders } = await supabase.from("orders").select().in('status', ['submitted', 'processed'])
     return (

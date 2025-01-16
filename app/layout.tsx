@@ -131,9 +131,14 @@ export default async function RootLayout({
                   </NavigationMenu>
                   {
                     role?role.value == "kierownik"?
-                        <Button variant="outline" asChild>
-                          <Link href="/report">Report</Link>
-                        </Button>
+                        <>
+                          <Button variant="outline" asChild>
+                            <Link href="/report">Report</Link>
+                          </Button>
+                          <Button variant="outline" asChild>
+                            <Link href="/order">Orders</Link>
+                          </Button>
+                        </>
                         :
                         <Button variant="outline" asChild>
                           <Link href="/order">Orders</Link>
