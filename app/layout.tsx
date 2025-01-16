@@ -69,20 +69,24 @@ export default async function RootLayout({
                       </SheetHeader>
                       <div className="flex flex-col gap-4 mt-4">
                         <NavMenu categories={productCategories}/>
-                      </div>
-                      {
-                        role?role.value == "kierownik"?
-                            <Link href="/report" className="text-lg font-semibold hover:text-violet-600">
-                              Report
-                            </Link>
+                        {
+                          role?role.value == "kierownik"?<>
+                                <Link href="/report" className="text-lg font-semibold hover:text-violet-600">
+                                  Report
+                                </Link>
+                                <Link href="/order" className="text-lg font-semibold hover:text-violet-600">
+                                  Orders
+                                </Link>
+                              </>
+                              :
+                              <Link href="/order" className="text-lg font-semibold hover:text-violet-600">
+                                Orders
+                              </Link>
                             :
-                            <Link href="/order" className="text-lg font-semibold hover:text-violet-600">
-                              Orders
-                            </Link>
-                          :
-                          <></>
-                      }
-                      <HeaderAuth mobile={true}/>
+                            <></>
+                        }
+                        <HeaderAuth mobile={true}/>
+                      </div>
                       </ScrollArea>
                     </SheetContent>
                   </Sheet>
