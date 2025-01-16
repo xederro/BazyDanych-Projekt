@@ -19,10 +19,11 @@ interface OrdersProp {
       order_id: number,
       date: number,
       status: string
-    }]
+    }],
+  prompt?: string
 }
 
-export function Orders({ordersList}: OrdersProp) {
+export function Orders({ordersList, prompt}: OrdersProp) {
   const [orders, setOrders] = useState(ordersList)
   const [filterCode, setFilterCode] = useState('')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
@@ -41,7 +42,7 @@ export function Orders({ordersList}: OrdersProp) {
 
   return (
     <div className="w-[30vw] min-w-[340px] max-w-[600px]">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Your Orders</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">{prompt??"Your Orders"}</h1>
       <div className="mb-4">
         <Input
           type="text"

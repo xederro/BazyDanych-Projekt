@@ -54,7 +54,7 @@ export function ProductDetailsKierownik({product}: ProductProp) {
 
   const handleDelete = async () => {
     try {
-      const {error} = await supabase.from("products").delete().eq("product_id", product.product_id);
+      const {error} = await supabase.from("products").update({available: false}).eq("product_id", product.product_id);
       if (!!error) throw error;
       router.push("/products/"+product.category_id);
     } catch (error) {
