@@ -105,7 +105,7 @@ export function CreateOrder({clients, productsList}: CreateOrderProps) {
   const handleCreateUser = async () => {
     const result = await fetch('/auth/create', {
       method: 'POST',
-      body: JSON.stringify({email: email, password: newUser.nip})
+      body: JSON.stringify({email: email, nip: newUser.nip, name: newUser.name}),
     })
 
     if (!result.ok) {
@@ -114,17 +114,8 @@ export function CreateOrder({clients, productsList}: CreateOrderProps) {
     }
 
     result.json().then(async data => {
-      console.log(data)
-      const {data: user, error} = await supabase.from('clients').insert([{name: newUser.name, nip: newUser.nip, auth_id: data.id}]).select('client_id').single()
-
-      if (error) {
-        console.error(error)
-        return
-      }
-
-      const createdUser = {client_id: user.client_id, ...newUser}
-      setUsers([...users, createdUser])
-      setSelectedUser(createdUser)
+      setUsers([...users, data.user])
+      setSelectedUser(data.user)
       setNewUser({name: '', nip: ''})
       setEmail('')
     })
