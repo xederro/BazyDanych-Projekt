@@ -30,6 +30,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import {createClient} from "@/utils/supabase/client";
+import {useRouter} from "next/navigation";
 
 interface OrderProp {
   products:[{
@@ -48,14 +49,21 @@ interface OrderProp {
 
 export function OrderDetailsMagazynier({products, order}: OrderProp) {
   const supabase = createClient();
+  const router = useRouter();
   const [productsDetails, setProductsDetails] = useState(products.map(product => {return {...product, units: product.units.filter(unit => unit !== null)}}))
   const [newSerialNumber, setNewSerialNumber] = useState('')
+  const [getOrder, setOrder] = useState(order)
   const [expandedProducts, setExpandedProducts] = useState<string[]>([])
 
   const handleAddUnit = async () => {
     if (newSerialNumber.trim() === '') return
     try {
-      const {data, error} = await supabase.from("units").update({order_id: order.order_id}).is("order_id", null).eq("unit_id", newSerialNumber).select().maybeSingle();
+      // if (getOrder.status == 'submitted') {
+      //   const {error} = await supabase.from("orders").update({status: 'processed'}).eq("order_id", getOrder.order_id);
+      //   if (!!error) throw error;
+      //   setOrder({...order, status: 'processed'})
+      // }
+      const {data, error} = await supabase.from("units").update({order_id: getOrder.order_id, status: 'sold'}).is("order_id", null).eq("unit_id", newSerialNumber).select().maybeSingle();
       if (!!error) throw error;
 
       const updatedProducts = productsDetails.map(product => {
@@ -77,7 +85,7 @@ export function OrderDetailsMagazynier({products, order}: OrderProp) {
 
   const handleRemoveUnit = async (productId: number, serialNumber: string) => {
     try {
-      const {error} = await supabase.from("units").update({order_id: null}).eq("unit_id", serialNumber).eq("order_id", order.order_id);
+      const {error} = await supabase.from("units").update({order_id: null, status: 'available'}).eq("unit_id", serialNumber).eq("order_id", getOrder.order_id);
       if (!!error) throw error;
 
       const updatedProducts = productsDetails.map(product => {
@@ -91,6 +99,16 @@ export function OrderDetailsMagazynier({products, order}: OrderProp) {
       })
 
       setProductsDetails(updatedProducts)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleSent = async () => {
+    try {
+      const {error} = await supabase.from("orders").update({status: 'sent'}).eq("order_id", getOrder.order_id);
+      if (!!error) throw error;
+      router.push("/order");
     } catch (error) {
       console.error(error)
     }
@@ -117,15 +135,15 @@ export function OrderDetailsMagazynier({products, order}: OrderProp) {
           <dl className="sm:divide-y sm:divide-gray-200">
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Order ID</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.order_id}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{getOrder.order_id}</dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Date</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{ new Date(order.date).toLocaleString() }</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{ new Date(getOrder.date).toLocaleString() }</dd>
             </div>
             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Status</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{order.status}</dd>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{getOrder.status}</dd>
             </div>
           </dl>
         </div>
@@ -199,6 +217,9 @@ export function OrderDetailsMagazynier({products, order}: OrderProp) {
             </AccordionItem>
           ))}
         </Accordion>
+        <Button onClick={handleSent} className="mt-6">
+          Send Order
+        </Button>
       </div>
     </>
   )
