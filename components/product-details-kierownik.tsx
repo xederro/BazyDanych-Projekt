@@ -26,7 +26,7 @@ interface ProductProp {
       name: string,
       price: number,
       description: string,
-      specification: string,
+      specification: {},
       category_id: string,
     }
 }
@@ -34,6 +34,7 @@ interface ProductProp {
 export function ProductDetailsKierownik({product}: ProductProp) {
   const [isEditing, setIsEditing] = useState(false)
   const [changes, setProduct] = useState(product)
+  const [spec, setSpec] = useState(product?.specification)
 
   const handleEdit = () => {
     setIsEditing(!isEditing)
@@ -43,8 +44,10 @@ export function ProductDetailsKierownik({product}: ProductProp) {
   const supabase = createClient();
 
   const handleSave = async () => {
+    let product = changes
+    product.specification = spec
     try {
-      const {error} = await supabase.from("products").update(changes).eq("product_id", product.product_id);
+      const {error} = await supabase.from("products").update(product).eq("product_id", product.product_id);
       if (!!error) throw error;
       setIsEditing(false)
     } catch (error) {
@@ -67,8 +70,13 @@ export function ProductDetailsKierownik({product}: ProductProp) {
     setProduct(prev => ({...prev, [name]: name === 'price' ? parseFloat(value) : value}))
   }
 
-  const handleSpecChange = (index: number, field: 'name' | 'value', value: string) => {
-    setProduct(prev => ({...prev, [field]: value}))
+  const handleSpecChange = (index: string, field: 'name' | 'value', value: string) => {
+    if (field === 'name') {
+      setSpec(prev => ({...prev, [value]: prev[index]}))
+      setSpec(prev => (delete prev[index] && prev))
+    } else {
+      setSpec(prev => ({...prev, [index]: value}))
+    }
   }
 
 
@@ -143,7 +151,7 @@ export function ProductDetailsKierownik({product}: ProductProp) {
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Specifications</h2>
               <ul className="space-y-2">
-                {Object.entries(product.specification).map(([k, v]) => (
+                {Object.entries(spec).map(([k, v]) => (
                   <li key={k} className="flex justify-between">
                     {isEditing ? (
                       <>
