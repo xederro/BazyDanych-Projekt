@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
   if (error) { return NextResponse.json({ error }, { status: 500 }) }
 
-  const {data: user, error:e} = await supabase.from('clients').insert([{name: name, nip: nip, auth_id: data.user?.id}]).select('client_id').single()
+  const {data: user, error:e} = await supabase.from('clients').insert([{name: name, nip: nip, auth_id: data.user?.id}]).select().single()
 
   if (e) {
     await adminAuthClient.deleteUser(data.user?.id)
